@@ -1,6 +1,6 @@
 # synchronized [![Build Status](https://travis-ci.org/JsCommunity/synchronized.png?branch=master)](https://travis-ci.org/JsCommunity/synchronized)
 
-`synchronized` is a function decorator that ensures that the function calls will be synchronized
+`synchronized` is a function decorator which ensures that calls do not run simultaneously
 
 ## Install
 
@@ -15,13 +15,12 @@ Installation of the [npm package](https://npmjs.org/package/synchronized):
 ```js
   let i = 0
 
-  @synchronized
-  fn () {
+  const fn = synchronized(() => {
     console.log(i)
     return Promise.resolve().then(() => {
       i++
     })
-  }
+  })
 
   Promise.all([ fn(), fn() ])
 
