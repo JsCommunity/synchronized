@@ -1,3 +1,12 @@
+const makeValueSetter = key => function (value) {
+  Object.defineProperty(this, key, {
+    configurable: true,
+    enumerable: true,
+    value,
+    writable: true
+  })
+}
+
 const toDecorator = wrap => (target, key, descriptor) => {
   // function
   if (key === undefined) {
@@ -19,25 +28,16 @@ const toDecorator = wrap => (target, key, descriptor) => {
     const wrappedMethod = wrap(value)
 
     const descriptor = Object.getOwnPropertyDescriptor(target, key)
-    delete descriptor.get
-    descriptor.value = wrappedMethod
+    descriptor.get = () => wrappedMethod
     if ('set' in descriptor) {
-      delete descriptor.set
-      descriptor.writable = true
+      descriptor.set = makeValueSetter(key)
     }
     Object.defineProperty(this, key, descriptor)
 
     return wrappedMethod
   }
   if (writable) {
-    newDescriptor.set = function (value) {
-      Object.defineProperty(this, key, {
-        configurable: true,
-        enumerable: true,
-        value,
-        writable: true
-      })
-    }
+    newDescriptor.set = makeValueSetter(key)
   }
 
   return newDescriptor
