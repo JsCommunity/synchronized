@@ -6,7 +6,7 @@ describe('synchronized functions', () => {
   it('should synchronize async functions', () => {
     let i = 0
     const fn = synchronized((expectedI, result) => {
-      expect(expectedI).toBe(i)
+      expect(i).toBe(expectedI)
 
       return Promise.resolve().then(() => {
         i++
@@ -21,37 +21,43 @@ describe('synchronized functions', () => {
       fn(1, 'bar').then(result => {
         expect(result).toBe('bar')
       })
-    ])
+    ]).then(() => expect(i).toBe(2))
   })
 
   it('should synchronize async rejected functions', () => {
     let i = 0
-    const fn = synchronized((expectedI, result) => {
-      expect(expectedI).toBe(i)
+    const fn = synchronized((expectedI, error) => {
+      expect(i).toBe(expectedI)
       return Promise.resolve().then(() => {
         i++
-        return Promise.reject('reason')
+        return Promise.reject(error)
       })
     })
 
     return Promise.all([
-      fn(0, 'foo'),
-      fn(1, 'bar')
-    ]).catch(error => {
-      expect(i).toBe(1)
-      expect(error).toBe('reason')
+      fn(0, 'foo').then(() => {
+        expect(true).toBe(false)
+      }).catch(error => {
+        expect(error).toBe('foo')
+      }),
+      fn(1, 'bar').then(() => {
+        expect(true).toBe(false)
+      }).catch(error => {
+        expect(error).toBe('bar')
+      })
+    ]).then(() => {
+      expect(i).toBe(2)
     })
   })
 })
 
 describe('synchronized methods', () => {
-  it('should synchronize async methods', () => {
+  it('should not synchronize between instances', () => {
     let i = 0
     class Test {
       @synchronized
       fn (expectedI, result) {
-        expect(expectedI).toBe(i)
-
+        expect(i).toBe(expectedI)
         return Promise.resolve().then(() => {
           i++
           return result
@@ -59,17 +65,21 @@ describe('synchronized methods', () => {
       }
     }
 
-    const t = new Test()
+    const t1 = new Test()
+    const t2 = new Test()
 
     return Promise.all([
-      t.fn(0, 'foo').then(result => {
+      t1.fn(0, 'foo').then(result => {
         expect(result).toBe('foo')
       }),
-      t.fn(1, 'bar').then(result => {
+      t1.fn(2, 'bar').then(result => {
         expect(result).toBe('bar')
+      }),
+      t2.fn(1, 'baz').then(result => {
+        expect(result).toBe('baz')
       })
     ]).then(() => {
-      expect(i).toBe(2)
+      expect(i).toBe(3)
     })
   })
 
@@ -78,7 +88,7 @@ describe('synchronized methods', () => {
     class Test {
       @synchronized
       static fn (expectedI, result) {
-        expect(expectedI).toBe(i)
+        expect(i).toBe(expectedI)
 
         return Promise.resolve().then(() => {
           i++
@@ -101,7 +111,7 @@ describe('synchronized methods', () => {
     })
   })
 
-  it('should forward setter', () => {
+  it('should behave like a normal property', () => {
     class Test {
       @synchronized
       fn () {
@@ -110,12 +120,13 @@ describe('synchronized methods', () => {
     }
 
     const t = new Test()
+    t.fn = 42
 
-    function newFn () {
-      return 1
-    }
-    t.fn = newFn
-
-    expect(t.fn).toBe(newFn)
+    expect(Object.getOwnPropertyDescriptor(t, 'fn')).toEqual({
+      value: 42,
+      writable: true,
+      enumerable: true,
+      configurable: true
+    })
   })
 })

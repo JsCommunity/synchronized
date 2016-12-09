@@ -1,7 +1,18 @@
 const toDecorator = wrap => (target, key, descriptor) => {
+  // function
   if (key === undefined) {
     return wrap(target)
   }
+
+  // static method
+  if (typeof target !== 'function') {
+    return {
+      ...descriptor,
+      value: wrap(descriptor.value)
+    }
+  }
+
+  // instance method
 
   const { value, writable, ...newDescriptor } = descriptor
   newDescriptor.get = function () {
@@ -20,11 +31,12 @@ const toDecorator = wrap => (target, key, descriptor) => {
   }
   if (writable) {
     newDescriptor.set = function (value) {
-      const descriptor = Object.getOwnPropertyDescriptor(target, key)
-      delete descriptor.set
-      delete descriptor.get
-      descriptor.value = value
-      Object.defineProperty(this, key, descriptor)
+      Object.defineProperty(this, key, {
+        configurable: true,
+        enumerable: true,
+        value,
+        writable: true
+      })
     }
   }
 
