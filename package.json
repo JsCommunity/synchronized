@@ -2,8 +2,16 @@
   "name": "synchronized",
   "version": "0.0.0",
   "license": "ISC",
-  "description": "",
-  "keywords": [],
+  "description": "function decorator which ensures that calls do not run simultaneously",
+  "keywords": [
+    "decorator",
+    "function",
+    "lock",
+    "mutex",
+    "synchronize",
+    "synchronized",
+    "wrapper"
+  ],
   "homepage": "https://github.com/JsCommunity/synchronized",
   "bugs": "https://github.com/JsCommunity/synchronized/issues",
   "repository": {
