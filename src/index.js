@@ -53,7 +53,7 @@ const synchronized = fn => {
 
   return function () {
     const makeCall = () => {
-      const promise = fn.apply(this, arguments)
+      const promise = new Promise(resolve => resolve(fn.apply(this, arguments)))
 
       current = promise.then(free, free)
 
