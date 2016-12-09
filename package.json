@@ -53,8 +53,8 @@
   },
   "babel": {
     "plugins": [
-      "transform-decorators-legacy",
-      "lodash"
+      "lodash",
+      "transform-decorators-legacy"
     ],
     "presets": [
       [

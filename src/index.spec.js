@@ -2,13 +2,14 @@
 
 import synchronized from './'
 
-describe('synchronized()', () => {
+describe('synchronized functions', () => {
   it('should synchronize async functions', () => {
     let i = 0
     const fn = synchronized((expectedI, result) => {
-      expect(expectedI).toBe(i++)
+      expect(expectedI).toBe(i)
 
       return Promise.resolve().then(() => {
+        i++
         return result
       })
     })
@@ -23,45 +24,13 @@ describe('synchronized()', () => {
     ])
   })
 
-  it('should synchronize async delayed functions', () => {
+  it('should synchronize async rejected functions', () => {
     let i = 0
     const fn = synchronized((expectedI, result) => {
-      return new Promise((resolve, reject) => {
-        const tmp = i
-        expect(expectedI).toBe(tmp)
-
-        setTimeout(() => {
-          i = tmp + 1
-          resolve(result)
-        }, 100)
-      })
-    })
-
-    return Promise.all([
-      fn(0, 'foo').then(result => {
-        expect(result).toBe('foo')
-      }),
-      fn(1, 'bar').then(result => {
-        expect(result).toBe('bar')
-      })
-    ]).then(() => expect(i).toBe(2))
-  })
-
-  it('should synchronize async delayed functions with one rejected promise', () => {
-    let i = 0
-    const fn = synchronized((expectedI, result) => {
-      return new Promise((resolve, reject) => {
-        const tmp = i
-        expect(expectedI).toBe(tmp)
-
-        setTimeout(() => {
-          i = tmp + 1
-          if (i > 1) {
-            reject('reason')
-          } else {
-            resolve('ok')
-          }
-        }, 100)
+      expect(expectedI).toBe(i)
+      return Promise.resolve().then(() => {
+        i++
+        return Promise.reject('reason')
       })
     })
 
@@ -69,32 +38,28 @@ describe('synchronized()', () => {
       fn(0, 'foo'),
       fn(1, 'bar')
     ]).catch(error => {
-      expect(i).toBe(2)
+      expect(i).toBe(1)
       expect(error).toBe('reason')
     })
   })
+})
 
+describe('synchronized methods', () => {
   it('should synchronize async methods', () => {
     let i = 0
     class Test {
       @synchronized
       fn (expectedI, result) {
-        return new Promise((resolve, reject) => {
-          const tmp = i
-          expect(tmp).toBe(expectedI)
+        expect(expectedI).toBe(i)
 
-          setTimeout(() => {
-            i = tmp + 1
-            resolve(result)
-          }, 100)
+        return Promise.resolve().then(() => {
+          i++
+          return result
         })
       }
     }
 
     const t = new Test()
-    const t2 = new Test()
-
-    t2.fn = function () {}
 
     return Promise.all([
       t.fn(0, 'foo').then(result => {
@@ -102,9 +67,6 @@ describe('synchronized()', () => {
       }),
       t.fn(1, 'bar').then(result => {
         expect(result).toBe('bar')
-      }),
-      t2.fn(0, 'baz').then(result => {
-        expect(result).toBe('baz')
       })
     ]).then(() => {
       expect(i).toBe(2)
@@ -116,27 +78,44 @@ describe('synchronized()', () => {
     class Test {
       @synchronized
       static fn (expectedI, result) {
-        return new Promise((resolve, reject) => {
-          const tmp = i
-          expect(tmp).toBe(expectedI)
+        expect(expectedI).toBe(i)
 
-          setTimeout(() => {
-            i = tmp + 1
-            resolve(result)
-          }, 100)
+        return Promise.resolve().then(() => {
+          i++
+          return result
         })
       }
     }
 
+    const { fn } = Test
+
     return Promise.all([
-      Test.fn(0, 'foo').then(result => {
+      fn(0, 'foo').then(result => {
         expect(result).toBe('foo')
       }),
-      Test.fn(1, 'bar').then(result => {
+      fn(1, 'bar').then(result => {
         expect(result).toBe('bar')
       })
     ]).then(() => {
       expect(i).toBe(2)
     })
+  })
+
+  it('should forward setter', () => {
+    class Test {
+      @synchronized
+      fn () {
+        return 0
+      }
+    }
+
+    const t = new Test()
+
+    function newFn () {
+      return 1
+    }
+    t.fn = newFn
+
+    expect(t.fn).toBe(newFn)
   })
 })

@@ -5,7 +5,7 @@ const toDecorator = wrap => (target, key, descriptor) => {
 
   const { value, writable, ...newDescriptor } = descriptor
   newDescriptor.get = function () {
-    const wrappedMethod = wrap(value, true)
+    const wrappedMethod = wrap(value)
 
     const descriptor = Object.getOwnPropertyDescriptor(target, key)
     delete descriptor.get
@@ -22,6 +22,8 @@ const toDecorator = wrap => (target, key, descriptor) => {
     newDescriptor.set = function (value) {
       const descriptor = Object.getOwnPropertyDescriptor(target, key)
       delete descriptor.set
+      delete descriptor.get
+      descriptor.value = value
       Object.defineProperty(this, key, descriptor)
     }
   }
@@ -32,22 +34,23 @@ const toDecorator = wrap => (target, key, descriptor) => {
 // ===================================================================
 
 const synchronized = fn => {
-  const queue = []
-  const dequeue = () => queue.splice(0, 1)
+  let current
+  const free = () => {
+    current = null
+  }
 
-  return function (...params) {
+  return function () {
     const makeCall = () => {
-      const promise = fn.call(this, ...params)
-      queue.push(promise)
-      promise.then(dequeue, dequeue)
+      const promise = fn.apply(this, arguments)
+
+      current = promise.then(free, free)
+
       return promise
     }
 
-    if (queue.length === 0) {
-      return makeCall()
-    } else {
-      return queue[queue.length - 1].then(makeCall, makeCall)
-    }
+    return current
+      ? current.then(makeCall, makeCall)
+      : makeCall()
   }
 }
 
