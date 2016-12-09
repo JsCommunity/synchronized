@@ -28,6 +28,7 @@ describe('synchronized functions', () => {
     let i = 0
     const fn = synchronized((expectedI, error) => {
       expect(i).toBe(expectedI)
+
       return Promise.resolve().then(() => {
         i++
         return Promise.reject(error)
@@ -54,32 +55,23 @@ describe('synchronized functions', () => {
 describe('synchronized methods', () => {
   it('should not synchronize between instances', () => {
     let i = 0
+
     class Test {
       @synchronized
-      fn (expectedI, result) {
+      fn (expectedI) {
         expect(i).toBe(expectedI)
+
         return Promise.resolve().then(() => {
-          i++
-          return result
+          ++i
         })
       }
     }
 
-    const t1 = new Test()
-    const t2 = new Test()
-
     return Promise.all([
-      t1.fn(0, 'foo').then(result => {
-        expect(result).toBe('foo')
-      }),
-      t1.fn(2, 'bar').then(result => {
-        expect(result).toBe('bar')
-      }),
-      t2.fn(1, 'baz').then(result => {
-        expect(result).toBe('baz')
-      })
+      new Test().fn(0),
+      new Test().fn(0)
     ]).then(() => {
-      expect(i).toBe(3)
+      expect(i).toBe(2)
     })
   })
 
@@ -123,10 +115,10 @@ describe('synchronized methods', () => {
     t.fn = 42
 
     expect(Object.getOwnPropertyDescriptor(t, 'fn')).toEqual({
-      value: 42,
-      writable: true,
+      configurable: true,
       enumerable: true,
-      configurable: true
+      value: 42,
+      writable: true
     })
   })
 })

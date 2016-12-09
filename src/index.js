@@ -5,7 +5,7 @@ const toDecorator = wrap => (target, key, descriptor) => {
   }
 
   // static method
-  if (typeof target !== 'function') {
+  if (typeof target === 'function') {
     return {
       ...descriptor,
       value: wrap(descriptor.value)
@@ -61,7 +61,7 @@ const synchronized = fn => {
     }
 
     return current
-      ? current.then(makeCall, makeCall)
+      ? current.then(makeCall)
       : makeCall()
   }
 }
