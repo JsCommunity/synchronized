@@ -1,6 +1,6 @@
 # synchronized [![Build Status](https://travis-ci.org/JsCommunity/synchronized.png?branch=master)](https://travis-ci.org/JsCommunity/synchronized)
 
-`synchronized` is a function decorator which ensures that calls do not run simultaneously
+> Function decorator which ensures that calls do not run simultaneously.
 
 ## Install
 
