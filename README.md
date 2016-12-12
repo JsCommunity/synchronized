@@ -1,30 +1,31 @@
-# synchronized [![Build Status](https://travis-ci.org/JsCommunity/synchronized.png?branch=master)](https://travis-ci.org/JsCommunity/synchronized)
+# decorator-synchronized [![Build Status](https://travis-ci.org/JsCommunity/decorator-synchronized.png?branch=master)](https://travis-ci.org/JsCommunity/decorator-synchronized)
 
 > Function decorator which ensures that calls do not run simultaneously.
 
 ## Install
 
-Installation of the [npm package](https://npmjs.org/package/synchronized):
+Installation of the [npm package](https://npmjs.org/package/decorator-synchronized):
 
 ```
-> npm install --save synchronized
+> npm install --save decorator-synchronized
 ```
 
 ## Usage
 
 ```js
-  let i = 0
+import synchronized from 'decorator-synchronized'
 
-  const fn = synchronized(() => {
-    console.log(i)
-    return Promise.resolve().then(() => {
-      i++
-    })
-  })
+let i = 0
 
-  Promise.all([ fn(), fn() ])
+const fn = synchronized(() => {
+console.log(i)
+return Promise.resolve().then(() => {
+  i++
+})
+})
 
-  // => Prints 0 then 1
+Promise.all([ fn(), fn() ])
+// => Prints 0 then 1
 ```
 
 ## Development
@@ -53,7 +54,7 @@ the code.
 
 You may:
 
-- report any [issue](https://github.com/JsCommunity/synchronized/issues)
+- report any [issue](https://github.com/JsCommunity/decorator-synchronized/issues)
   you've encountered;
 - fork and create a pull request.
 

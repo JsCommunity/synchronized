@@ -1,5 +1,5 @@
 {
-  "name": "synchronized",
+  "name": "decorator-synchronized",
   "version": "0.0.0",
   "license": "ISC",
   "description": "function decorator which ensures that calls do not run simultaneously",
@@ -12,11 +12,11 @@
     "synchronized",
     "wrapper"
   ],
-  "homepage": "https://github.com/JsCommunity/synchronized",
-  "bugs": "https://github.com/JsCommunity/synchronized/issues",
+  "homepage": "https://github.com/JsCommunity/decorator-synchronized",
+  "bugs": "https://github.com/JsCommunity/decorator-synchronized/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JsCommunity/synchronized.git"
+    "url": "https://github.com/JsCommunity/decorator-synchronized.git"
   },
   "author": {
     "name": "Pierre Donias",
