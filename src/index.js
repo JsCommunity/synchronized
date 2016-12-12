@@ -13,39 +13,41 @@ const toDecorator = wrap => (target, key, descriptor) => {
 // ===================================================================
 
 const synchronized = (fn, isMethod) => {
-  const { get, set } = (() => {
-    if (isMethod) {
-      const s = Symbol()
-      return {
-        get () {
-          return this[s]
-        },
-        set (value) {
-          this[s] = value
-        }
-      }
+  if (isMethod) {
+    const s = Symbol()
+    const free = () => {
+      this[s] = null
     }
 
-    let current
-    return {
-      get: () => current,
-      set: value => {
-        current = value
-      }
-    }
-  })()
+    return function __synchronized__ () {
+      const makeCall = () => {
+        const promise = new Promise(resolve => resolve(fn.apply(this, arguments)))
 
-  return function () {
+        this[s] = promise.then(free, free)
+
+        return promise
+      }
+
+      const current = this[s]
+
+      return current
+        ? current.then(makeCall)
+        : makeCall()
+    }
+  }
+
+  let current
+  const free = () => {
+    current = null
+  }
+  return function __synchronized__ () {
     const makeCall = () => {
       const promise = new Promise(resolve => resolve(fn.apply(this, arguments)))
 
-      const free = () => set.call(this, null)
-      set.call(this, promise.then(free, free))
+      current = promise.then(free, free)
 
       return promise
     }
-
-    const current = get.call(this)
 
     return current
       ? current.then(makeCall)
