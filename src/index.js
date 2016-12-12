@@ -1,70 +1,51 @@
-const bind = (fn, thisArg) => function () {
-  return fn.apply(thisArg, arguments)
-}
-
-const makeValueSetter = key => function (value) {
-  Object.defineProperty(this, key, {
-    configurable: true,
-    enumerable: true,
-    value,
-    writable: true
-  })
-}
-
 const toDecorator = wrap => (target, key, descriptor) => {
   // function
   if (key === undefined) {
     return wrap(target)
   }
 
-  // static method
-  if (typeof target === 'function') {
-    return {
-      ...descriptor,
-      value: wrap(descriptor.value)
-    }
+  return {
+    ...descriptor,
+    value: wrap(descriptor.value, typeof target !== 'function')
   }
-
-  // instance method
-
-  const { value, writable, ...newDescriptor } = descriptor
-  newDescriptor.get = function () {
-    const wrappedMethod = wrap(
-      bind(value, this) // this method is linked to this instance, it is bound to avoid issues
-    )
-
-    const descriptor = Object.getOwnPropertyDescriptor(target, key)
-    descriptor.get = () => wrappedMethod
-    if ('set' in descriptor) {
-      descriptor.set = makeValueSetter(key)
-    }
-    Object.defineProperty(this, key, descriptor)
-
-    return wrappedMethod
-  }
-  if (writable) {
-    newDescriptor.set = makeValueSetter(key)
-  }
-
-  return newDescriptor
 }
 
 // ===================================================================
 
-const synchronized = fn => {
-  let current
-  const free = () => {
-    current = null
-  }
+const synchronized = (fn, isMethod) => {
+  const { get, set } = (() => {
+    if (isMethod) {
+      const s = Symbol()
+      return {
+        get () {
+          return this[s]
+        },
+        set (value) {
+          this[s] = value
+        }
+      }
+    }
+
+    let current
+    return {
+      get: () => current,
+      set: value => {
+        current = value
+      }
+    }
+  })()
 
   return function () {
     const makeCall = () => {
       const promise = new Promise(resolve => resolve(fn.apply(this, arguments)))
 
-      current = promise.then(free, free)
+      const free = () => set.call(this, null)
+      set.call(this, promise.then(free, free))
 
       return promise
     }
+
+    const current = get.call(this)
 
     return current
       ? current.then(makeCall)

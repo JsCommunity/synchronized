@@ -53,18 +53,6 @@ describe('synchronized functions', () => {
 })
 
 describe('synchronized methods', () => {
-  it('should be bound', () => {
-    class Test {
-      @synchronized
-      fn (thisArg) {
-        expect(this).toBe(thisArg)
-      }
-    }
-
-    const t = new Test()
-    return t.fn.call(null, t)
-  })
-
   it('should not synchronize between instances', () => {
     let i = 0
 
