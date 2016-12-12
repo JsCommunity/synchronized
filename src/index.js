@@ -15,14 +15,12 @@ const toDecorator = wrap => (target, key, descriptor) => {
 const synchronized = (fn, isMethod) => {
   if (isMethod) {
     const s = Symbol()
-    const free = () => {
-      this[s] = null
-    }
 
-    return function __synchronized__ () {
+    return function () {
       const makeCall = () => {
         const promise = new Promise(resolve => resolve(fn.apply(this, arguments)))
 
+        const free = () => { this[s] = null }
         this[s] = promise.then(free, free)
 
         return promise
@@ -37,10 +35,8 @@ const synchronized = (fn, isMethod) => {
   }
 
   let current
-  const free = () => {
-    current = null
-  }
-  return function __synchronized__ () {
+  const free = () => { current = null }
+  return function () {
     const makeCall = () => {
       const promise = new Promise(resolve => resolve(fn.apply(this, arguments)))
 
