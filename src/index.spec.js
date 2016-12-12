@@ -102,23 +102,4 @@ describe('synchronized methods', () => {
       expect(i).toBe(2)
     })
   })
-
-  it('should behave like a normal property', () => {
-    class Test {
-      @synchronized
-      fn () {
-        return 0
-      }
-    }
-
-    const t = new Test()
-    t.fn = 42
-
-    expect(Object.getOwnPropertyDescriptor(t, 'fn')).toEqual({
-      configurable: true,
-      enumerable: true,
-      value: 42,
-      writable: true
-    })
-  })
 })
