@@ -53,18 +53,6 @@ describe('synchronized functions', () => {
 })
 
 describe('synchronized methods', () => {
-  it('should be bound', () => {
-    class Test {
-      @synchronized
-      fn (thisArg) {
-        expect(this).toBe(thisArg)
-      }
-    }
-
-    const t = new Test()
-    return t.fn.call(null, t)
-  })
-
   it('should not synchronize between instances', () => {
     let i = 0
 
@@ -112,25 +100,6 @@ describe('synchronized methods', () => {
       })
     ]).then(() => {
       expect(i).toBe(2)
-    })
-  })
-
-  it('should behave like a normal property', () => {
-    class Test {
-      @synchronized
-      fn () {
-        return 0
-      }
-    }
-
-    const t = new Test()
-    t.fn = 42
-
-    expect(Object.getOwnPropertyDescriptor(t, 'fn')).toEqual({
-      configurable: true,
-      enumerable: true,
-      value: 42,
-      writable: true
     })
   })
 })
