@@ -1,3 +1,7 @@
+const bind = (fn, thisArg) => function () {
+  return fn.apply(this, arguments)
+}
+
 const makeValueSetter = key => function (value) {
   Object.defineProperty(this, key, {
     configurable: true,
@@ -25,7 +29,9 @@ const toDecorator = wrap => (target, key, descriptor) => {
 
   const { value, writable, ...newDescriptor } = descriptor
   newDescriptor.get = function () {
-    const wrappedMethod = wrap(value)
+    const wrappedMethod = wrap(
+      bind(value, this) // this method is linked to this instance, it is bound to avoid issues
+    )
 
     const descriptor = Object.getOwnPropertyDescriptor(target, key)
     descriptor.get = () => wrappedMethod
