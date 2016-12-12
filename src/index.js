@@ -1,5 +1,5 @@
 const bind = (fn, thisArg) => function () {
-  return fn.apply(this, arguments)
+  return fn.apply(thisArg, arguments)
 }
 
 const makeValueSetter = key => function (value) {
