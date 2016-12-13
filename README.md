@@ -18,10 +18,10 @@ import synchronized from 'decorator-synchronized'
 let i = 0
 
 const fn = synchronized(() => {
-console.log(i)
-return Promise.resolve().then(() => {
-  i++
-})
+  console.log(i)
+  return Promise.resolve().then(() => {
+    i++
+  })
 })
 
 Promise.all([ fn(), fn() ])
