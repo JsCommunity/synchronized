@@ -50,6 +50,25 @@ describe('synchronized functions', () => {
       expect(i).toBe(2)
     })
   })
+
+  it('fails', () => {
+    let lock = false
+    const f = synchronized(() => {
+      expect(lock).toBe(false)
+      lock = true
+
+      return Promise.resolve().then(() => {
+        lock = false
+      })
+    })
+
+    return Promise.all([
+      f(),
+
+      f(),
+      Promise.resolve().then(f)
+    ])
+  })
 })
 
 describe('synchronized methods', () => {
