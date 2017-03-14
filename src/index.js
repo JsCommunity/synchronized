@@ -18,7 +18,7 @@ const synchronizedFn = fn => {
   }
 }
 const synchronizedMd = method => {
-  const s = Symbol()
+  const s = Symbol('@synchronized')
 
   return function () {
     const makeCall = () => method.apply(this, arguments)
