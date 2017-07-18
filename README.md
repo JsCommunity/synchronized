@@ -26,6 +26,28 @@ const fn = synchronized(() => {
 
 Promise.all([ fn(), fn() ])
 // => Prints 0 then 1
+
+// Create a dedicated synchronizer which will be shared amongst
+// multiple functions.
+//
+// Useful when functions work on the same resource.
+const counterSynchronized = synchronized()
+
+const increment = counterSynchronized(async () => {
+  const i = 1 + await db.getCounter()
+  await db.setCounter(i)
+  return i
+})
+
+const decrement = counterSynchronized(async () => {
+  const i = -1 + await db.getCounter()
+  await db.setCounter(i)
+  return i
+})
+
+increment().then(console.log) // prints 1
+decrement().then(console.log) // prints 0
+
 ```
 
 ## Development
