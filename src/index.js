@@ -1,26 +1,31 @@
-const toDecorator = (wrapFn, wrapMd = wrapFn) =>
-  (target, key, descriptor) => key === undefined
-    ? wrapFn(target)
+const toDecorator = (wrapFn, wrapMd = wrapFn) => (...args) => {
+  const wrapFn_ = wrapFn()
+  const wrapMd_ = wrapMd()
+  const decorator = (target, key, descriptor) => key === undefined
+    ? wrapFn_(target)
     : {
       ...descriptor,
-      value: (typeof target === 'function' ? wrapFn : wrapMd)(descriptor.value)
+      value: (typeof target === 'function' ? wrapFn_ : wrapMd_)(descriptor.value)
     }
+
+  return args.length === 0
+    ? decorator
+    : decorator(...args) // for now, we tolerate raw calls to the decorator
+}
 
 // ===================================================================
 
-const synchronizedFn = fn => {
+const synchronizedFn = () => {
   let queue = Promise.resolve()
-
-  return function () {
+  return fn => function () {
     const makeCall = () => fn.apply(this, arguments)
 
     return (queue = queue.then(makeCall, makeCall))
   }
 }
-const synchronizedMd = method => {
+const synchronizedMd = () => {
   const s = Symbol('@synchronized')
-
-  return function () {
+  return method => function () {
     const makeCall = () => method.apply(this, arguments)
 
     return (this[s] = (this[s] || Promise.resolve()).then(makeCall, makeCall))
