@@ -8,6 +8,9 @@
     "function",
     "lock",
     "mutex",
+    "queue",
+    "synchronise",
+    "synchronised",
     "synchronize",
     "synchronized",
     "wrapper"
