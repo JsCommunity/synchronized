@@ -2,6 +2,8 @@
 
 > Function decorator which ensures that calls do not run simultaneously.
 
+Requires *WeakMap*, it your system does not have it, use a [polyfill](https://github.com/medikoo/es6-weak-map).
+
 ## Install
 
 Installation of the [npm package](https://npmjs.org/package/decorator-synchronized):

@@ -15,21 +15,25 @@ const toDecorator = (wrapFn, wrapMd = wrapFn) => (...args) => {
 
 // ===================================================================
 
-const synchronizedFn = () => {
-  let queue = Promise.resolve()
-  return fn => function () {
-    const makeCall = () => fn.apply(this, arguments)
+export default toDecorator(
+  () => {
+    let queue = Promise.resolve()
+    return fn => function () {
+      const makeCall = () => fn.apply(this, arguments)
 
-    return (queue = queue.then(makeCall, makeCall))
+      return (queue = queue.then(makeCall, makeCall))
+    }
+  },
+  () => {
+    const queues = new WeakMap()
+    return method => function () {
+      const makeCall = () => method.apply(this, arguments)
+
+      let queue = queues.get(this)
+      queues.set(
+        queue = queue === undefined ? makeCall() : queue.then(makeCall, makeCall)
+      )
+      return queue
+    }
   }
-}
-const synchronizedMd = () => {
-  const s = Symbol('@synchronized')
-  return method => function () {
-    const makeCall = () => method.apply(this, arguments)
-
-    return (this[s] = (this[s] || Promise.resolve()).then(makeCall, makeCall))
-  }
-}
-
-export default toDecorator(synchronizedFn, synchronizedMd)
+)
