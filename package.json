@@ -83,6 +83,7 @@
     ]
   },
   "jest": {
+    "collectCoverage": true,
     "testEnvironment": "node",
     "roots": [
       "<rootDir>/src"
