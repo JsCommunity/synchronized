@@ -74,7 +74,7 @@ else, just provide a key function:
 
 ```js
 const fn = synchronized.withKey(
-    (_, secondArg) => secondArg
+  (_, secondArg) => secondArg
 )((firstArg, secondArg) => {
   // TODO
 })
