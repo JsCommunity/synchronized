@@ -49,7 +49,35 @@ const decrement = counterSynchronized(async () => {
 
 increment().then(console.log) // prints 1
 decrement().then(console.log) // prints 0
+```
 
+### `withKey`
+
+```js
+import synchronized from 'decorator-synchronized'
+
+const updateUser = synchronized.withKey()((userId, props) => {
+  const user = await db.getUser(userId)
+  await db.setUser(userId, { ...user, ...props })
+})
+
+// will correctly update the user without race conditions
+updaterUser('wq1567e', { foo: 3.14 })
+updaterUser('wq1567e', { bar: 42 })
+
+// different users are still updated in parallel
+updateUser('ct356tv', { baz: 2.72 })
+```
+
+The key is deduced from the first argument, if you need something
+else, just provide a key function:
+
+```js
+const fn = synchronized.withKey(
+  (_, secondArg) => secondArg
+)((firstArg, secondArg) => {
+  // TODO
+})
 ```
 
 ## Development
