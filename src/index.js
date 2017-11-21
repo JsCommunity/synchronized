@@ -31,6 +31,7 @@ export default toDecorator(
 
       let queue = queues.get(this)
       queues.set(
+        this,
         queue = queue === undefined ? makeCall() : queue.then(makeCall, makeCall)
       )
       return queue

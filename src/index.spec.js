@@ -67,11 +67,15 @@ describe('synchronized methods', () => {
       }
     }
 
+    const t0 = new Test()
+    const t1 = new Test()
+
     return Promise.all([
-      new Test().fn(0),
-      new Test().fn(0)
+      t0.fn(0),
+      t1.fn(0),
+      t0.fn(2)
     ]).then(() => {
-      expect(i).toBe(2)
+      expect(i).toBe(3)
     })
   })
 
