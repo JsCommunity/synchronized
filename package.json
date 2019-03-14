@@ -65,15 +65,15 @@
     "clean": "rimraf dist/",
     "dev": "cross-env NODE_ENV=development babel --watch --source-maps --out-dir=dist/ src/",
     "dev-test": "jest --bail --watch",
-    "prebuild": "yarn run clean",
-    "predev": "yarn run prebuild",
-    "prepublishOnly": "yarn run build",
-    "pretest": "eslint --ignore-path .gitignore --fix .",
+    "prebuild": "npm run clean",
+    "predev": "npm run prebuild",
+    "prepublishOnly": "npm run build",
+    "pretest": "eslint --ignore-path .gitignore .",
     "test": "jest"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn test"
+      "pre-commit": "lint-staged"
     }
   },
   "jest": {
@@ -83,5 +83,13 @@
       "<rootDir>/src"
     ],
     "testRegex": "\\.spec\\.js$"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add",
+      "eslint --ignore-pattern '!*'",
+      "jest --findRelatedTests --passWithNoTests"
+    ]
   }
 }
