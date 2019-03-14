@@ -5,7 +5,7 @@ const toDecorator = (wrapFn, wrapMd = wrapFn) => (...args) => {
     ? wrapFn_(target)
     : {
       ...descriptor,
-      value: (typeof target === 'function' ? wrapFn_ : wrapMd_)(descriptor.value)
+      value: (typeof target === 'function' ? wrapFn_ : wrapMd_)(descriptor.value),
     }
 
   return args.length === 0

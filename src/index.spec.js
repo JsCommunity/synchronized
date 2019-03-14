@@ -20,7 +20,7 @@ describe('synchronized functions', () => {
       }),
       fn(1, 'bar').then(result => {
         expect(result).toBe('bar')
-      })
+      }),
     ]).then(() => expect(i).toBe(2))
   })
 
@@ -45,7 +45,7 @@ describe('synchronized functions', () => {
         expect(true).toBe(false)
       }).catch(error => {
         expect(error).toBe('bar')
-      })
+      }),
     ]).then(() => {
       expect(i).toBe(2)
     })
@@ -73,7 +73,7 @@ describe('synchronized methods', () => {
     return Promise.all([
       t0.fn(0),
       t1.fn(0),
-      t0.fn(2)
+      t0.fn(2),
     ]).then(() => {
       expect(i).toBe(3)
     })
@@ -101,7 +101,7 @@ describe('synchronized methods', () => {
       }),
       fn(1, 'bar').then(result => {
         expect(result).toBe('bar')
-      })
+      }),
     ]).then(() => {
       expect(i).toBe(2)
     })
@@ -120,11 +120,11 @@ describe('synchronized functions with keys', () => {
 
     const p0 = Promise.all([
       fn(0, 'foo'),
-      fn(0, 'bar')
+      fn(0, 'bar'),
     ])
     const p1 = Promise.all([
       fn(1, 'baz'),
-      fn(1, 'qux')
+      fn(1, 'qux'),
     ])
 
     expect(counters[0]).toBe(1)
@@ -157,15 +157,15 @@ describe('synchronized methods with keys', () => {
 
     const p00 = Promise.all([
       t0.fn(0, 'foo'),
-      t0.fn(0, 'bar')
+      t0.fn(0, 'bar'),
     ])
     const p01 = Promise.all([
       t0.fn(1, 'baz'),
-      t0.fn(1, 'qux')
+      t0.fn(1, 'qux'),
     ])
     const p10 = Promise.all([
       t1.fn(0, 'quux'),
-      t1.fn(0, 'quuz')
+      t1.fn(0, 'quuz'),
     ])
 
     expect(t0.counters[0]).toBe(1)
