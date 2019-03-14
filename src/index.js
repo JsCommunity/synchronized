@@ -1,7 +1,7 @@
 const toDecorator = (wrapFn, wrapMd = wrapFn) => (...args) => {
-  const wrapFn_ = wrapFn();
-  const wrapMd_ = wrapMd();
-  const decorator = (target, key, descriptor) =>
+  const wrapFn_ = wrapFn(...args);
+  const wrapMd_ = wrapMd(...args);
+  return (target, key, descriptor) =>
     key === undefined
       ? wrapFn_(target)
       : {
@@ -10,8 +10,6 @@ const toDecorator = (wrapFn, wrapMd = wrapFn) => (...args) => {
             descriptor.value
           ),
         };
-
-  return args.length === 0 ? decorator : decorator(...args); // for now, we tolerate raw calls to the decorator
 };
 
 // ===================================================================
