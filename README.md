@@ -2,7 +2,7 @@
 
 > Function decorator which ensures that calls do not run simultaneously.
 
-Requires *WeakMap*, it your system does not have it, use a [polyfill](https://github.com/medikoo/es6-weak-map).
+Requires _WeakMap_, it your system does not have it, use a [polyfill](https://github.com/medikoo/es6-weak-map).
 
 ## Install
 
@@ -15,40 +15,40 @@ Installation of the [npm package](https://npmjs.org/package/decorator-synchroniz
 ## Usage
 
 ```js
-import synchronized from 'decorator-synchronized'
+import synchronized from "decorator-synchronized";
 
-let i = 0
+let i = 0;
 
 const fn = synchronized(() => {
-  console.log(i)
+  console.log(i);
   return Promise.resolve().then(() => {
-    i++
-  })
-})
+    i++;
+  });
+});
 
-Promise.all([ fn(), fn() ])
+Promise.all([fn(), fn()]);
 // => Prints 0 then 1
 
 // Create a dedicated synchronizer which will be shared amongst
 // multiple functions.
 //
 // Useful when functions work on the same resource.
-const counterSynchronized = synchronized()
+const counterSynchronized = synchronized();
 
 const increment = counterSynchronized(async () => {
-  const i = 1 + await db.getCounter()
-  await db.setCounter(i)
-  return i
-})
+  const i = 1 + (await db.getCounter());
+  await db.setCounter(i);
+  return i;
+});
 
 const decrement = counterSynchronized(async () => {
-  const i = -1 + await db.getCounter()
-  await db.setCounter(i)
-  return i
-})
+  const i = -1 + (await db.getCounter());
+  await db.setCounter(i);
+  return i;
+});
 
-increment().then(console.log) // prints 1
-decrement().then(console.log) // prints 0
+increment().then(console.log); // prints 1
+decrement().then(console.log); // prints 0
 ```
 
 ### `withKey`
@@ -73,11 +73,11 @@ The key is deduced from the first argument, if you need something
 else, just provide a key function:
 
 ```js
-const fn = synchronized.withKey(
-  (_, secondArg) => secondArg
-)((firstArg, secondArg) => {
-  // TODO
-})
+const fn = synchronized.withKey((_, secondArg) => secondArg)(
+  (firstArg, secondArg) => {
+    // TODO
+  }
+);
 ```
 
 ## Development
@@ -101,7 +101,7 @@ const fn = synchronized.withKey(
 
 ## Contributions
 
-Contributions are *very* welcomed, either on the documentation or on
+Contributions are _very_ welcomed, either on the documentation or on
 the code.
 
 You may:
