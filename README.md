@@ -1,4 +1,6 @@
-# decorator-synchronized [![Build Status](https://travis-ci.org/JsCommunity/decorator-synchronized.png?branch=master)](https://travis-ci.org/JsCommunity/decorator-synchronized)
+# decorator-synchronized
+
+[![Package Version](https://badgen.net/npm/v/decorator-synchronized)](https://npmjs.org/package/decorator-synchronized) [![Build Status](https://travis-ci.org/JsCommunity/decorator-synchronized.png?branch=master)](https://travis-ci.org/JsCommunity/decorator-synchronized) [![PackagePhobia](https://badgen.net/packagephobia/install/decorator-synchronized)](https://packagephobia.now.sh/result?p=decorator-synchronized) [![Latest Commit](https://badgen.net/github/last-commit/JsCommunity/decorator-synchronized)](https://github.com/JsCommunity/decorator-synchronized/commits/master)
 
 > Function decorator which ensures that calls do not run simultaneously.
 
