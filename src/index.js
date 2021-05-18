@@ -14,7 +14,7 @@ const toDecorator = (wrapFn, wrapMd = wrapFn) => (...args) => {
 
 // ===================================================================
 
-const synchronize = toDecorator(
+const synchronized = toDecorator(
   () => {
     let queue = Promise.resolve();
     return fn =>
@@ -41,13 +41,13 @@ const synchronize = toDecorator(
   }
 );
 
-export { synchronize as default };
+export { synchronized as default };
 
 // -------------------------------------------------------------------
 
 const DEFAULT_KEY_FUNCTION = arg => arg;
 
-synchronize.withKey = toDecorator(
+synchronized.withKey = toDecorator(
   (keyFunction = DEFAULT_KEY_FUNCTION) => {
     const queues = new Map();
     return fn =>
