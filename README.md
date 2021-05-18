@@ -17,7 +17,7 @@ Installation of the [npm package](https://npmjs.org/package/decorator-synchroniz
 ## Usage
 
 ```js
-import synchronized from "decorator-synchronized";
+import { synchronized } from "decorator-synchronized";
 
 let i = 0;
 
@@ -56,7 +56,7 @@ decrement().then(console.log); // prints 0
 ### `withKey`
 
 ```js
-import synchronized from "decorator-synchronized";
+import { synchronized } from "decorator-synchronized";
 
 const updateUser = synchronized.withKey()(async (userId, props) => {
   const user = await db.getUser(userId);

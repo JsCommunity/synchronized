@@ -14,7 +14,7 @@ const toDecorator = (wrapFn, wrapMd = wrapFn) => (...args) => {
 
 // ===================================================================
 
-const synchronized = toDecorator(
+export const synchronized = toDecorator(
   () => {
     let queue = Promise.resolve();
     return fn =>
@@ -40,8 +40,6 @@ const synchronized = toDecorator(
       };
   }
 );
-
-export { synchronized as default };
 
 // -------------------------------------------------------------------
 

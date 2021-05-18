@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import synchronized from "./";
+import { synchronized } from "./";
 
 describe("synchronized functions", () => {
   it("should synchronize async functions", () => {
