@@ -58,7 +58,7 @@ decrement().then(console.log); // prints 0
 ```js
 import synchronized from 'decorator-synchronized'
 
-const updateUser = synchronized.withKey()((userId, props) => {
+const updateUser = synchronized.withKey()(async (userId, props) => {
   const user = await db.getUser(userId)
   await db.setUser(userId, { ...user, ...props })
 })
